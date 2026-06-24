@@ -80,7 +80,9 @@ function AppInner() {
 
   const designCost = (data.stageDesign || []).reduce((s, i) => {
     const meta = CATALOG_MAP[i.key];
-    return s + (meta ? meta.cost : 0);
+    if (!meta) return s;
+    const cost = i.customCost !== null && i.customCost !== undefined ? Number(i.customCost) : (meta.defaultCost || 0);
+    return s + cost;
   }, 0);
 
   const grandTotal =
@@ -139,7 +141,7 @@ function AppInner() {
         ))}
       </nav>
 
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {tab === 'dashboard' && <Dashboard />}
 
         {tab === 'create' && <Create />}

@@ -1,10 +1,12 @@
 import { useEvent, fmt, sumItems } from '../store';
+import { CATALOG, designTotal } from './Create';
 
 const CATEGORIES = [
-  { key: 'stage',       label: 'Stage',        icon: '🎭', color: '#a78bfa' },
-  { key: 'staff',       label: 'Staff',         icon: '👥', color: '#60a5fa' },
-  { key: 'drinks',      label: 'Drinks',        icon: '🍹', color: '#34d399' },
-  { key: 'decorations', label: 'Decorations',   icon: '✨', color: '#f472b6' },
+  { key: 'stageDesign', label: 'Stage Design',  icon: '🎪', color: '#8b5cf6', isDesign: true },
+  { key: 'stage',       label: 'Stage Budget',  icon: '🎭', color: '#a78bfa' },
+  { key: 'staff',       label: 'Staff',          icon: '👥', color: '#60a5fa' },
+  { key: 'drinks',      label: 'Drinks',         icon: '🍹', color: '#34d399' },
+  { key: 'decorations', label: 'Decorations',    icon: '✨', color: '#f472b6' },
 ];
 
 export default function Dashboard() {
@@ -12,8 +14,8 @@ export default function Dashboard() {
 
   const totals = CATEGORIES.map(c => ({
     ...c,
-    total: sumItems(data[c.key]),
-    count: data[c.key].length,
+    total: c.isDesign ? designTotal(data.stageDesign || []) : sumItems(data[c.key]),
+    count: (data[c.key] || []).length,
   }));
 
   const grandTotal = totals.reduce((s, c) => s + c.total, 0);
