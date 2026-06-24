@@ -3,6 +3,7 @@ import { EventProvider, useEvent, fmt, sumItems } from './store.jsx';
 import Dashboard from './components/Dashboard';
 import BudgetSection from './components/BudgetSection';
 import Sponsors from './components/Sponsors';
+import Create, { CATALOG as CATALOG_MAP } from './components/Create';
 import './App.css';
 
 const STAGE_FIELDS = [
@@ -65,7 +66,8 @@ const DECOR_COLUMNS = [
 
 const TABS = [
   { id: 'dashboard',   label: 'Dashboard',    icon: '📊', countKey: null },
-  { id: 'stage',       label: 'Stage',        icon: '🎭', countKey: 'stage' },
+  { id: 'create',      label: 'Create',       icon: '🎪', countKey: 'stageDesign' },
+  { id: 'stage',       label: 'Stage Budget', icon: '🎭', countKey: 'stage' },
   { id: 'staff',       label: 'Staff',        icon: '👥', countKey: 'staff' },
   { id: 'drinks',      label: 'Drinks',       icon: '🍹', countKey: 'drinks' },
   { id: 'decorations', label: 'Decorations',  icon: '✨', countKey: 'decorations' },
@@ -76,11 +78,17 @@ function AppInner() {
   const [tab, setTab] = useState('dashboard');
   const { data, update } = useEvent();
 
+  const designCost = (data.stageDesign || []).reduce((s, i) => {
+    const meta = CATALOG_MAP[i.key];
+    return s + (meta ? meta.cost : 0);
+  }, 0);
+
   const grandTotal =
     sumItems(data.stage) +
     sumItems(data.staff) +
     sumItems(data.drinks) +
-    sumItems(data.decorations);
+    sumItems(data.decorations) +
+    designCost;
 
   return (
     <div className="app">
@@ -131,8 +139,10 @@ function AppInner() {
         ))}
       </nav>
 
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {tab === 'dashboard' && <Dashboard />}
+
+        {tab === 'create' && <Create />}
 
         {tab === 'stage' && (
           <BudgetSection

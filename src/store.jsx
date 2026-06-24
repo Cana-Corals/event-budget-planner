@@ -9,6 +9,7 @@ const DEFAULT = {
   drinks: [],
   decorations: [],
   sponsors: [],
+  stageDesign: [],
 };
 
 function load() {
